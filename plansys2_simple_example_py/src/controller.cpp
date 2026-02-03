@@ -77,7 +77,7 @@ public:
         problem_expert_->addInstance(plansys2::Instance{"unconscious", "consciousness"});
         problem_expert_->addInstance(plansys2::Instance{"confused", "consciousness"});
 
-        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot b)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot a)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected a b)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected b a)"));
         //problem_expert_->addPredicate(plansys2::Predicate("(connected c b)"));
@@ -127,9 +127,9 @@ public:
         problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 
 
-        goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (gas_checked a) (gas_checked b) (gas_checked c) (gas_checked d) (crack_checked a) (crack_checked b) (crack_checked c) (crack_checked d) (stairs_checked s1)";
+        goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (environment_checked a) (environment_checked b) (environment_checked c) (environment_checked d) (stairs_checked s1)";
         //goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (searched spot e) (searched spot f) (searched spot g) (searched spot h) (searched spot i) (searched spot j)";
-        current_position = "b";
+        current_position = "a";
     }
 
 
@@ -782,6 +782,34 @@ public:
                 }
 
             if (action_feedback.action == "checkcrack")
+                {   
+                    std::string sent = action_feedback.message_status;
+                    std::istringstream iss(sent);
+                    std::string word;
+                    std::vector<std::string> words;
+
+                    while (iss >> word)
+                    {
+                        words.push_back(word);
+                    }
+
+                    if (words.size() == 2)
+                    { //std::cout<< words[0] << std::endl;
+                        if (words[0] == "Emergency" && first == true)
+                        {
+                            first = false;
+                            std::cout << "Emergency: " << action_feedback.completion << std::endl;
+                            emergency_plan();
+                        }
+                        else if (words[0] == "Good" && f_bat == true)
+                        {
+                            f_bat = false;
+                            std::cout << "All is good in paradise: " << action_feedback.completion << std::endl;
+                        }
+                    }
+                }
+
+                if (action_feedback.action == "checktemp")
                 {   
                     std::string sent = action_feedback.message_status;
                     std::istringstream iss(sent);

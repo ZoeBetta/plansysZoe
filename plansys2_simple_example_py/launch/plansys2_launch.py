@@ -107,6 +107,13 @@ def generate_launch_description():
         namespace=namespace,
         output='screen',
         parameters=[])
+    checktemp_cmd = Node(
+        package='plansys2_simple_example_py',
+        executable='checktemp_action_node_fake.py', #for the fake action report_action_node_fake.py oppure report_action_node.py
+        name='checktemp_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
 
     reportemergency_cmd = Node(
         package='plansys2_simple_example_py',
@@ -139,6 +146,7 @@ def generate_launch_description():
     ld.add_action(report_cmd)
     ld.add_action(checkgas_cmd)
     ld.add_action(checkcrack_cmd)
+    ld.add_action(checktemp_cmd)
     ld.add_action(reportemergency_cmd)
     ld.add_action(checkstairs_cmd)
     return ld

@@ -52,6 +52,7 @@ install(PROGRAMS
   plansys2_simple_example_py/checkcrack_action_node_fake.py
   plansys2_simple_example_py/reportemergency_action_node_fake.py
   plansys2_simple_example_py/checkstairs_action_node_fake.py
+  plansys2_simple_example_py/checktemp_action_node_fake.py
 
   DESTINATION lib/${PROJECT_NAME}
 )

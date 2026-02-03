@@ -36,6 +36,7 @@ stairs
 (is_exit ?l - location)
 (stairs_connected ?lo1 - location ?s - stairs)
 (stairs_checked ?s - stairs)
+(environment_checked ?l - location)
 )
 
 
@@ -170,6 +171,7 @@ stairs
         (over all(robot_at ?r ?l))
         (at start(is_free ?r))
         (at start(not_emergency ?r))
+        (over all(gas_checked ?l))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -178,6 +180,24 @@ stairs
     )
 
 )
+
+(:durative-action checktemp
+    :parameters (?r -robot ?l -location)
+    :duration( = ?duration 5)
+    :condition (and 
+        (over all(robot_at ?r ?l))
+        (at start(is_free ?r))
+        (at start(not_emergency ?r))
+        (over all(crack_checked ?l))
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(environment_checked ?l))
+    )
+
+)
+
 
 (:durative-action reportemergency
     :parameters (?r -robot ?l -location)

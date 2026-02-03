@@ -34,13 +34,13 @@ class SearchAction(ActionExecutorClient):
         self.location = None
         self.c = 1
         self.loc=[]
-        self.max_loc=14
+        self.max_loc=4
         self.found=[0,0,0,0]
         
-        self.loc.append(randint(10,self.max_loc))
-        self.loc.append(randint(10,self.max_loc))
-        self.loc.append(randint(10,self.max_loc))
-        self.loc.append(randint(10,self.max_loc))
+        self.loc.append(randint(0,self.max_loc))
+        self.loc.append(randint(0,self.max_loc))
+        self.loc.append(randint(0,self.max_loc))
+        self.loc.append(randint(0,self.max_loc))
 
         self.subscription = self.create_subscription(
             ActionExecution,

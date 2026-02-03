@@ -27,10 +27,10 @@ from plansys2_msgs.msg import Param
 from threading import Event
 import time
 
-class CheckAction(ActionExecutorClient):
+class ChecktempAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('check', 0.5)
+        super().__init__('checktemp', 0.5)
         self.progress_ = 0.0
         self.location = None
 
@@ -38,31 +38,31 @@ class CheckAction(ActionExecutorClient):
     def do_work(self):
         if self.progress_ < 0.3:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Check running')
+            self.send_feedback(self.progress_, 'Checktemp running')
         else:
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
-            found_person = random() < 0.05 # vero, quindi batteria bassa il 5% delle volte
-            #found_person = False
+            found_person = random() < 0.05
+            #found_person = True
 
-            self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
+            self.get_logger().info('Checking temperature:{}'.format(found_person))
             if (found_person):
-              self.send_feedback(10.0, 'Low battery')
+              self.send_feedback(10.0, 'Emergency recognizedn')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish check temperature')
             else:
-              self.send_feedback(60.0, 'Enough battery')
+              self.send_feedback(60.0, 'Good bestemmia')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish check temperature')
 
-        self.get_logger().info('checking battery ... {}'.format(self.progress_))
+        self.get_logger().info('checking temperature ... {}'.format(self.progress_))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CheckAction()
-    node.set_parameters([Parameter(name='action_name', value='check')])
+    node = ChecktempAction()
+    node.set_parameters([Parameter(name='action_name', value='checktemp')])
 
     node.trigger_configure()
 
