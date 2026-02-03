@@ -66,6 +66,7 @@ public:
         problem_expert_->addInstance(plansys2::Instance{"j", "location"});
         problem_expert_->addInstance(plansys2::Instance{"battery_point", "location"});
         problem_expert_->addInstance(plansys2::Instance{"exit", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"s1", "stairs"});
 
         problem_expert_->addInstance(plansys2::Instance{"stand", "state"});
         problem_expert_->addInstance(plansys2::Instance{"lay", "state"});
@@ -76,7 +77,7 @@ public:
         problem_expert_->addInstance(plansys2::Instance{"unconscious", "consciousness"});
         problem_expert_->addInstance(plansys2::Instance{"confused", "consciousness"});
 
-        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot a)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot b)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected a b)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected b a)"));
         //problem_expert_->addPredicate(plansys2::Predicate("(connected c b)"));
@@ -89,6 +90,8 @@ public:
 
         problem_expert_->addPredicate(plansys2::Predicate("(connected d b)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected b d)"));
+
+        problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected b s1)"));
 
 /*         problem_expert_->addPredicate(plansys2::Predicate("(connected e c)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected c e)"));
@@ -121,11 +124,12 @@ public:
         problem_expert_->addPredicate(plansys2::Predicate("(not_emergency spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 
+        problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 
 
-        goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (gas_checked a) (gas_checked b) (gas_checked c) (gas_checked d) (crack_checked a) (crack_checked b) (crack_checked c) (crack_checked d)";
+        goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (gas_checked a) (gas_checked b) (gas_checked c) (gas_checked d) (crack_checked a) (crack_checked b) (crack_checked c) (crack_checked d) (stairs_checked s1)";
         //goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (searched spot e) (searched spot f) (searched spot g) (searched spot h) (searched spot i) (searched spot j)";
-        current_position = "a";
+        current_position = "b";
     }
 
 
@@ -762,7 +766,7 @@ public:
                     }
 
                     if (words.size() == 2)
-                    {std::cout<< words[0] << std::endl;
+                    { //std::cout<< words[0] << std::endl;
                         if (words[0] == "Emergency" && first == true)
                         {
                             first = false;
@@ -790,12 +794,91 @@ public:
                     }
 
                     if (words.size() == 2)
-                    {std::cout<< words[0] << std::endl;
+                    { //std::cout<< words[0] << std::endl;
                         if (words[0] == "Emergency" && first == true)
                         {
                             first = false;
                             std::cout << "Emergency: " << action_feedback.completion << std::endl;
                             emergency_plan();
+                        }
+                        else if (words[0] == "Good" && f_bat == true)
+                        {
+                            f_bat = false;
+                            std::cout << "All is good in paradise: " << action_feedback.completion << std::endl;
+                        }
+                    }
+                }
+
+            if (action_feedback.action == "checkstairs")
+                {   
+                    std::string sent = action_feedback.message_status;
+                    std::istringstream iss(sent);
+                    std::string word;
+                    std::vector<std::string> words;
+                    first = true;
+                    while (iss >> word)
+                    {
+                        words.push_back(word);
+                    }
+                    //std::cout<< words.size() << std::endl;
+                    if (words.size() == 3)
+                    {std::cout<< words[0] << std::endl;
+                        if (words[0] == "EmergencyStair" && first == true)
+                        {
+                            first = false;
+                            std::cout << "stairs broken: " << action_feedback.completion << std::endl;
+                            executor_client_->cancel_plan_execution();
+                            std::string location;
+                            location = words[1];
+                            std::string stair;
+                            stair = words[2];
+                            std::cout << "(stairs_connected " << location << " " << stair << ")" << std::endl;
+                            problem_expert_->removePredicate(plansys2::Predicate("(stairs_connected " + location + " " + stair + ")"));
+                            old_goal = goal;
+                            auto a = check_predicate();
+                            std::cout << "Replanning" << std::endl;
+
+                            if (a == false)
+                            {
+                                problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
+                            }
+                            std::string to_remove = " (stairs_checked s1)";
+
+                                size_t pos = goal.find(to_remove);
+                                if (pos != std::string::npos) {
+                                    goal.erase(pos, to_remove.length());
+                                } 
+                            auto replan_init_time = std::chrono::high_resolution_clock::now();
+
+                            //moved_person = true;
+                            
+                                std::cout << "GOAL: " << goal << std::endl;
+                            problem_expert_->setGoal(plansys2::Goal("(" + goal + ")"));
+
+                            auto domain = domain_expert_->getDomain();
+                            auto problem = problem_expert_->getProblem();
+                            auto plan = planner_client_->getPlan(domain, problem);
+
+                            std::cout << problem << std::endl;
+                            
+
+                            const auto &plan2 = plan.value();
+                            for (const auto &item : plan2.items)
+                            {
+                                std::cout << "Action: " << item.action << std::endl;
+                                file_ << "Action: " << item.action << std::endl;
+                            }
+
+                            if (!plan.has_value())
+                            {
+                                std::cout << "Unsuccessful replan attempt to reach goal " << parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+                            }
+
+                            auto replan_end_time = std::chrono::high_resolution_clock::now();
+                            std::chrono::duration<double, std::milli> replan_duration = replan_end_time - replan_init_time;
+                            std::cout << "STAIRS Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            file_ << "Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            executor_client_->start_plan_execution(plan.value());
                         }
                         else if (words[0] == "Good" && f_bat == true)
                         {

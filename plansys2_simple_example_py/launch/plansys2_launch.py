@@ -116,6 +116,14 @@ def generate_launch_description():
         output='screen',
         parameters=[])
 
+    checkstairs_cmd = Node(
+        package='plansys2_simple_example_py',
+        executable='checkstairs_action_node_fake.py', #for the fake action report_action_node_fake.py oppure report_action_node.py
+        name='checkstairs_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
+
     ld = LaunchDescription()
 
     ld.add_action(declare_namespace_cmd)
@@ -132,5 +140,5 @@ def generate_launch_description():
     ld.add_action(checkgas_cmd)
     ld.add_action(checkcrack_cmd)
     ld.add_action(reportemergency_cmd)
-
+    ld.add_action(checkstairs_cmd)
     return ld

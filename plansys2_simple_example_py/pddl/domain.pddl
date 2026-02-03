@@ -8,6 +8,7 @@ location
 person
 state
 consciousness
+stairs
 )
 
 (:constants stand sit lay unknown - state
@@ -33,6 +34,8 @@ consciousness
 (gas_checked ?l - location)
 (crack_checked ?l -location)
 (is_exit ?l - location)
+(stairs_connected ?lo1 - location ?s - stairs)
+(stairs_checked ?s - stairs)
 )
 
 
@@ -194,7 +197,22 @@ consciousness
     )
 )
 
-
+(:durative-action checkstairs
+    :parameters (?r -robot ?s - stairs ?l - location)
+    :duration( = ?duration 5)
+    :condition (and 
+        (over all(robot_at ?r ?l))
+        (over all(stairs_connected ?l ?s))
+        (at start(is_free ?r))
+        (at start(not_emergency ?r))
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(stairs_checked ?s))
+        (at end(robot_at ?r ?l))
+    )
+)
 
 
 
