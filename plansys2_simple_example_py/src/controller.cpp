@@ -91,7 +91,7 @@ public:
         problem_expert_->addPredicate(plansys2::Predicate("(connected d b)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected b d)"));
 
-        problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected b s1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected a s1)"));
 
 /*         problem_expert_->addPredicate(plansys2::Predicate("(connected e c)"));
         problem_expert_->addPredicate(plansys2::Predicate("(connected c e)"));
@@ -334,6 +334,7 @@ public:
         problem_expert_->removePredicate(plansys2::Predicate("(battery_checked spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(battery_unchecked spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
+        problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
         //std::cout << "START OF EMERGENCYYYYY3" << std::endl;
 
         for (const auto &param : preds)
@@ -770,7 +771,7 @@ public:
                         if (words[0] == "Emergency" && first == true)
                         {
                             first = false;
-                            std::cout << "Emergency: " << action_feedback.completion << std::endl;
+                            std::cout << "EmergencyGas: " << action_feedback.completion << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -798,7 +799,7 @@ public:
                         if (words[0] == "Emergency" && first == true)
                         {
                             first = false;
-                            std::cout << "Emergency: " << action_feedback.completion << std::endl;
+                            std::cout << "EmergencyCracks: " << action_feedback.completion << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -826,7 +827,7 @@ public:
                         if (words[0] == "Emergency" && first == true)
                         {
                             first = false;
-                            std::cout << "Emergency: " << action_feedback.completion << std::endl;
+                            std::cout << "EmergencyTemp: " << action_feedback.completion << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -850,7 +851,7 @@ public:
                     }
                     //std::cout<< words.size() << std::endl;
                     if (words.size() == 3)
-                    {std::cout<< words[0] << std::endl;
+                    {//std::cout<< words[0] << std::endl;
                         if (words[0] == "EmergencyStair" && first == true)
                         {
                             first = false;
@@ -915,6 +916,99 @@ public:
                         }
                     }
                 }
+
+                if (action_feedback.action == "checklink")
+                {   
+                    std::string sent = action_feedback.message_status;
+                    std::istringstream iss(sent);
+                    std::string word;
+                    std::vector<std::string> words;
+                    first = true;
+                    while (iss >> word)
+                    {
+                        words.push_back(word);
+                    }
+                    //std::cout<< words.size() << std::endl;
+                    if (words.size() == 3)
+                    {//std::cout<< words[0] << std::endl;
+                        if (words[0] == "EmergencyLink" && first == true)
+                        {
+                            first = false;
+                            std::cout << "link broken: " << action_feedback.completion << std::endl;
+                            executor_client_->cancel_plan_execution();
+                            std::string from;
+                            from = words[1];
+                            std::string to;
+                            to = words[2];
+                            std::cout << "(link_connected " << from << " " << to << ")" << std::endl;
+                            problem_expert_->removePredicate(plansys2::Predicate("(connected " + from + " " + to + ")"));
+                            problem_expert_->removePredicate(plansys2::Predicate("(connected " + to + " " + from + ")"));
+                            problem_expert_->removePredicate(plansys2::Predicate("(next_move spot " + to + ")"));
+                            problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
+                            old_goal = goal;
+                            auto a = check_predicate();
+                            std::cout << "Replanning" << std::endl;
+
+                            if (a == false)
+                            {
+                                problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
+                            }
+/*                             std::string to_remove = "(searched spot " + to + ")";
+
+                                size_t pos = goal.find(to_remove);
+                                if (pos != std::string::npos) {
+                                    goal.erase(pos, to_remove.length());
+                                } 
+                            std::string to_remove1 = "(environment_checked " + to + ")";
+
+                                size_t pos1 = goal.find(to_remove1);
+                                if (pos1 != std::string::npos) {
+                                    goal.erase(pos1, to_remove1.length());
+                                }  */
+                            auto replan_init_time = std::chrono::high_resolution_clock::now();
+
+                            //moved_person = true;
+                            
+                                std::cout << "GOAL: " << goal << std::endl;
+                            problem_expert_->setGoal(plansys2::Goal("(" + goal + ")"));
+
+                            auto domain = domain_expert_->getDomain();
+                            auto problem = problem_expert_->getProblem();
+                            auto plan = planner_client_->getPlan(domain, problem);
+
+                            std::cout << problem << std::endl;
+                            
+
+                            const auto &plan2 = plan.value();
+                            for (const auto &item : plan2.items)
+                            {
+                                std::cout << "Action: " << item.action << std::endl;
+                                file_ << "Action: " << item.action << std::endl;
+                            }
+
+                            if (!plan.has_value())
+                            {
+                                std::cout << "Unsuccessful replan attempt to reach goal " << parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+                            }
+
+                            auto replan_end_time = std::chrono::high_resolution_clock::now();
+                            std::chrono::duration<double, std::milli> replan_duration = replan_end_time - replan_init_time;
+                            std::cout << "LINK Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            file_ << "Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            executor_client_->start_plan_execution(plan.value());
+                        }
+                        else if (words[0] == "Good" && f_bat == true)
+                        {
+                            f_bat = false;
+                            std::cout << "All is good in paradise: " << action_feedback.completion << std::endl;
+                        }
+                    }
+                }
+
+
+
+
+
             }
 
             if (!executor_client_->execute_and_check_plan() && executor_client_->getResult())

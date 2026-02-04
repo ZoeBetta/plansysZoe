@@ -27,13 +27,13 @@ from plansys2_msgs.msg import Param
 from threading import Event
 import time
 
-class CheckstairsAction(ActionExecutorClient):
+class ChecklinkAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('checkstairs', 0.5)
+        super().__init__('checklink', 0.5)
         self.progress_ = 0.0
-        self.location = None
-        self.stair = None
+        self.locfrom = None
+        self.locto = None
         self.subscription = self.create_subscription(
             ActionExecution,
             '/actions_hub', self.listener_callback, 10)
@@ -44,41 +44,41 @@ class CheckstairsAction(ActionExecutorClient):
 #        self.get_logger().info(f'Action received with parameters {parameters}')
 
         # Here, perform any action-specific handling based on action_name and parameters
-        if action_name == 'checkstairs':
-            if len(parameters) == 3:  # Expected 'move <robot> <location> <stair>'
-                self.location = parameters[2]
-                self.stair = parameters[1]
+        if action_name == 'checklink':
+            if len(parameters) == 3:  # Expected 'checklink <robot> <location> <location>'
+                self.locfrom = parameters[1]
+                self.locto = parameters[2]
 #                self.get_logger().info(f'Robot in {self.location}')
 
 
     def do_work(self):
         if self.progress_ < 0.3:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Checkstairs running')
+            self.send_feedback(self.progress_, 'Checklink running')
         else:
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
             #found_person = True
 
-            self.get_logger().info('Checking stairs:{}'.format(found_person))
+            self.get_logger().info('Checking link from {} to {}'.format(self.locfrom, self.locto))
             if (found_person):
-              self.send_feedback(10.0, 'EmergencyStair ' + self.location + ' ' + self.stair)
+              self.send_feedback(10.0, 'EmergencyLink ' + self.locfrom + ' ' + self.locto)
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
+              self.finish(True, 1.0, 'Finish check link')
             else:
               self.send_feedback(60.0, 'No emergency recognized')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
+              self.finish(True, 1.0, 'Finish check link')
 
-        self.get_logger().info('checking stairs ... {}'.format(self.progress_))
+        self.get_logger().info('checking link ... {}'.format(self.progress_))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CheckstairsAction()
-    node.set_parameters([Parameter(name='action_name', value='checkstairs')])
+    node = ChecklinkAction()
+    node.set_parameters([Parameter(name='action_name', value='checklink')])
 
     node.trigger_configure()
 

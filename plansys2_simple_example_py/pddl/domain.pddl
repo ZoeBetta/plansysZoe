@@ -37,6 +37,7 @@ stairs
 (stairs_connected ?lo1 - location ?s - stairs)
 (stairs_checked ?s - stairs)
 (environment_checked ?l - location)
+(link_checked ?r1 ?r2 - location)
 )
 
 
@@ -51,6 +52,7 @@ stairs
     :condition (and
         (at start(battery_checked ?r))
         (at start(connected ?r1 ?r2))
+        (at start(link_checked ?r1 ?r2))
         (at start(robot_at ?r ?r1))
         (at start(next_move ?r ?r2))
     )
@@ -136,7 +138,7 @@ stairs
         (at start(battery_unchecked ?r))
         (at start(is_free ?r))
         (at start(robot_at ?r ?from))
-        (at start(connected ?from ?to))
+        (over all(connected ?from ?to))
 
     )
     :effect (and
@@ -224,13 +226,29 @@ stairs
         (over all(robot_at ?r ?l))
         (over all(stairs_connected ?l ?s))
         (at start(is_free ?r))
-        (at start(not_emergency ?r))
     )
     :effect (and
         (at start(not(is_free ?r)))
         (at end(is_free ?r))
         (at end(stairs_checked ?s))
         (at end(robot_at ?r ?l))
+    )
+)
+
+(:durative-action checklink
+    :parameters (?r -robot ?from ?to - location)
+    :duration( = ?duration 5)
+    :condition (and 
+        (over all(robot_at ?r ?from))
+        (over all (connected ?from ?to))
+        (at start(is_free ?r))
+        
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(link_checked ?from ?to))
+        (at end(link_checked ?to ?from))
     )
 )
 
