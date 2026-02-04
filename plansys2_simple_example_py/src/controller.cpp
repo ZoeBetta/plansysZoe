@@ -243,7 +243,7 @@ public:
         auto plan = planner_client_->getPlan(domain, problem);
 
         std::cout << problem << std::endl;
-        
+        file_ << "Replan to guide the person outside" << std::endl;
 
         const auto &plan2 = plan.value();
         for (const auto &item : plan2.items)
@@ -296,7 +296,7 @@ public:
         auto domain = domain_expert_->getDomain();
         auto problem = problem_expert_->getProblem();
         auto plan = planner_client_->getPlan(domain, problem);
-
+        file_ << "Replan to move the robot to the battery point, low battery" << std::endl;
         std::cout << problem << std::endl;
         //file_ << problem << std::endl;
         const auto &plan2 = plan.value();
@@ -403,7 +403,7 @@ public:
         }
 
         problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
-
+        file_ << "Replan because people found" << std::endl;
         // Replan
         goal = goal + "(person_evaluated " + p + ") (person_reported " + p + ") (dialog_finished " + p + ")";
 
@@ -414,8 +414,7 @@ public:
         auto plan = planner_client_->getPlan(domain, problem);
 
         std::cout << problem << std::endl;
-        //
-        // file_ << problem << std::endl;
+        //file_ << problem << std::endl;
 
         const auto &plan2 = plan.value();
         for (const auto &item : plan2.items)
@@ -696,7 +695,7 @@ public:
                                 executor_client_->cancel_plan_execution();
                                 //goaly = "and (robot_at spot battery_point)"; //(finished spot)";
                                 problem_expert_->setGoal(plansys2::Goal("(" + goal + ")"));
-
+                                file_ << "Replan because the robot is at battery point and the battery is charged" << std::endl;
                                 auto domain = domain_expert_->getDomain();
                                 auto problem = problem_expert_->getProblem();
                                 auto plan = planner_client_->getPlan(domain, problem);
@@ -772,6 +771,7 @@ public:
                         {
                             first = false;
                             std::cout << "EmergencyGas: " << action_feedback.completion << std::endl;
+                            file_ << "Replan because gas" << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -800,6 +800,7 @@ public:
                         {
                             first = false;
                             std::cout << "EmergencyCracks: " << action_feedback.completion << std::endl;
+                            file_ << "Replan because cracks detected" << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -828,6 +829,7 @@ public:
                         {
                             first = false;
                             std::cout << "EmergencyTemp: " << action_feedback.completion << std::endl;
+                            file_ << "Replan because temperature is too high" << std::endl;
                             emergency_plan();
                         }
                         else if (words[0] == "Good" && f_bat == true)
@@ -866,7 +868,7 @@ public:
                             old_goal = goal;
                             auto a = check_predicate();
                             std::cout << "Replanning" << std::endl;
-
+                            file_ << "Replan because stairs disconnected" << std::endl;
                             if (a == false)
                             {
                                 problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
@@ -948,7 +950,7 @@ public:
                             old_goal = goal;
                             auto a = check_predicate();
                             std::cout << "Replanning" << std::endl;
-
+                            file_ << "Replan because link disconnected" << std::endl;
                             if (a == false)
                             {
                                 problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
