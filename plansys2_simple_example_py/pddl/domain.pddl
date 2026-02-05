@@ -35,7 +35,7 @@ stairs
 (crack_checked ?l -location)
 (is_exit ?l - location)
 (stairs_connected ?lo1 - location ?s - stairs)
-(stairs_checked ?s - stairs)
+(stairs_checked ?s - stairs ?l1 ?l2 -location)
 (environment_checked ?l - location)
 (link_checked ?r1 ?r2 - location)
 )
@@ -220,18 +220,19 @@ stairs
 )
 
 (:durative-action checkstairs
-    :parameters (?r -robot ?s - stairs ?l - location)
+    :parameters (?r -robot ?s - stairs ?from ?to - location)
     :duration( = ?duration 5)
     :condition (and 
-        (over all(robot_at ?r ?l))
-        (over all(stairs_connected ?l ?s))
+        (over all(robot_at ?r ?from))
+        (over all(stairs_connected ?from ?s))
+        (over all(stairs_connected ?to ?s))
         (at start(is_free ?r))
     )
     :effect (and
         (at start(not(is_free ?r)))
         (at end(is_free ?r))
-        (at end(stairs_checked ?s))
-        (at end(robot_at ?r ?l))
+        (at end(stairs_checked ?s ?from ?to))
+        (at end (stairs_checked ?s ?to ?from))
     )
 )
 
@@ -251,6 +252,48 @@ stairs
         (at end(link_checked ?to ?from))
     )
 )
+
+
+(:durative-action climbstairs
+    :parameters (?r - robot ?r1 ?r2 - location ?s - stairs)
+    :duration ( = ?duration 5)
+    :condition (and
+        (at start(stairs_connected ?r1 ?s))
+        (at start(stairs_connected ?r2 ?s))
+        (at start(stairs_checked ?s ?r1 ?r2))
+        (at start(robot_at ?r ?r1))
+        (at start(next_move ?r ?r2))
+    )
+    :effect (and
+        (at start(not(robot_at ?r ?r1)))
+        (at end(robot_at ?r ?r2))
+        (at end(not(next_move ?r ?r2)))
+        (at end(battery_unchecked ?r))
+        (at end(not(battery_checked ?r)))
+    )
+)
+
+(:durative-action checkbatteryclimbing
+    :parameters (?r - robot ?from ?to - location ?s - stairs)
+    :duration ( = ?duration 5)
+    :condition (and
+        (at start(battery_unchecked ?r))
+        (at start(is_free ?r))
+        (at start(robot_at ?r ?from))
+        (at start(stairs_connected ?from ?s))
+        (at start(stairs_connected ?to ?s))
+
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(not(battery_unchecked ?r)))
+        (at end(battery_checked ?r))
+        (at end(next_move ?r ?to))
+    )
+)
+
+
 
 
 

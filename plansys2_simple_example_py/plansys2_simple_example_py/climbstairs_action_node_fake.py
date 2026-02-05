@@ -18,25 +18,20 @@ import rclpy
 from rclpy.parameter import Parameter, ParameterType
 
 from plansys2_support_py.ActionExecutorClient import ActionExecutorClient
-from random import random
 from plansys2_msgs.msg import ActionExecution
-from rclpy.node import Node
-from plansys2_msgs.srv import AffectNode, AffectParam, GetProblem, GetDomain
-from plansys2_msgs.msg import Node as NodeMsg
-from plansys2_msgs.msg import Param
-from threading import Event
 import time
 
-class CheckstairsAction(ActionExecutorClient):
+class ClimbStairsAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('checkstairs', 0.5)
+        super().__init__('climbstairs', 0.5)
         self.progress_ = 0.0
         self.location = None
-        self.stair = None
+
         self.subscription = self.create_subscription(
             ActionExecution,
             '/actions_hub', self.listener_callback, 10)
+
 
     def listener_callback(self, msg):
         parameters = msg.arguments
@@ -44,46 +39,34 @@ class CheckstairsAction(ActionExecutorClient):
 #        self.get_logger().info(f'Action received with parameters {parameters}')
 
         # Here, perform any action-specific handling based on action_name and parameters
-        if action_name == 'checkstairs':
-            if len(parameters) == 4:  # Expected 'checkstairs <robot> <stair> <from> <to>'
-                self.locationfrom = parameters[2]
-                self.locationto = parameters[3]
-                self.stair = parameters[1]
+        if action_name == 'climbstairs':
+            if len(parameters) == 4:  # Expected 'climbstairs <robot> <from> <to> <stair>'
+                self.location = parameters[2]
 #                self.get_logger().info(f'Robot in {self.location}')
 
-
     def do_work(self):
-        if self.progress_ < 0.3:
+        if self.progress_ < 0.5:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Checkstairs running')
+            self.send_feedback(self.progress_, 'Climb running')
         else:
-            #self.finish(True, 1.0, 'Search completed');
+            self.get_logger().info('climbed stairs ... {}'.format(self.location))
+            self.send_feedback(self.progress_, 'Climbed ' + self.location)
+            time.sleep(1)
+            self.finish(True, 1.0, 'Finished climbing stairs');
             self.progress_ = 0.0
-            found_person = random() < 0.05
-            #found_person = True
 
-            self.get_logger().info('Checking stairs:{}'.format(found_person))
-            if (found_person):
-              self.send_feedback(10.0, 'EmergencyStair ' + self.locationfrom + ' ' + self.locationto + ' ' + self.stair)
-              time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
-            else:
-              self.send_feedback(60.0, 'No emergency recognized')
-              time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
-
-        self.get_logger().info('checking stairs ... {}'.format(self.progress_))
-
+        self.get_logger().info('climbing ... {}, {}'.format(self.progress_, self.location))
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CheckstairsAction()
-    node.set_parameters([Parameter(name='action_name', value='checkstairs')])
+    node = ClimbStairsAction()
+    node.set_parameters([Parameter(name='action_name', value='climbstairs')])
 
     node.trigger_configure()
 
     rclpy.spin(node)
+
     rclpy.shutdown()
 
 if __name__ == '__main__':

@@ -27,59 +27,42 @@ from plansys2_msgs.msg import Param
 from threading import Event
 import time
 
-class CheckstairsAction(ActionExecutorClient):
+class CheckbatteryclimbingAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('checkstairs', 0.5)
+        super().__init__('checkbatteryclimbing', 0.5)
         self.progress_ = 0.0
         self.location = None
-        self.stair = None
-        self.subscription = self.create_subscription(
-            ActionExecution,
-            '/actions_hub', self.listener_callback, 10)
-
-    def listener_callback(self, msg):
-        parameters = msg.arguments
-        action_name = msg.action
-#        self.get_logger().info(f'Action received with parameters {parameters}')
-
-        # Here, perform any action-specific handling based on action_name and parameters
-        if action_name == 'checkstairs':
-            if len(parameters) == 4:  # Expected 'checkstairs <robot> <stair> <from> <to>'
-                self.locationfrom = parameters[2]
-                self.locationto = parameters[3]
-                self.stair = parameters[1]
-#                self.get_logger().info(f'Robot in {self.location}')
 
 
     def do_work(self):
         if self.progress_ < 0.3:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Checkstairs running')
+            self.send_feedback(self.progress_, 'Check battery climbing running')
         else:
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
-            found_person = random() < 0.05
-            #found_person = True
+            found_person = random() < 0.05 # vero, quindi batteria bassa il 5% delle volte
+            #found_person = False
 
-            self.get_logger().info('Checking stairs:{}'.format(found_person))
+            self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
             if (found_person):
-              self.send_feedback(10.0, 'EmergencyStair ' + self.locationfrom + ' ' + self.locationto + ' ' + self.stair)
+              self.send_feedback(10.0, 'Low battery')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
+              self.finish(True, 1.0, 'Finish battery')
             else:
-              self.send_feedback(60.0, 'No emergency recognized')
+              self.send_feedback(60.0, 'Enough battery')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish check stairs')
+              self.finish(True, 1.0, 'Finish battery')
 
-        self.get_logger().info('checking stairs ... {}'.format(self.progress_))
+        self.get_logger().info('checking battery climbing ... {}'.format(self.progress_))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = CheckstairsAction()
-    node.set_parameters([Parameter(name='action_name', value='checkstairs')])
+    node = CheckbatteryclimbingAction()
+    node.set_parameters([Parameter(name='action_name', value='checkbatteryclimbing')])
 
     node.trigger_configure()
 

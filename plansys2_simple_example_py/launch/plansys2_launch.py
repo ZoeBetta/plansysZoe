@@ -139,6 +139,22 @@ def generate_launch_description():
         output='screen',
         parameters=[])
 
+    climbstairs_cmd = Node(
+        package='plansys2_simple_example_py',
+        executable='climbstairs_action_node_fake.py', #for the fake action report_action_node_fake.py oppure report_action_node.py
+        name='climbstairs_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
+
+    checkbatteryclimbing_cmd = Node(
+        package='plansys2_simple_example_py',
+        executable='checkbatteryclimbing_action_node_fake.py', #for the fake action report_action_node_fake.py oppure report_action_node.py
+        name='checkbatteryclimbing_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
+
     ld = LaunchDescription()
 
     ld.add_action(declare_namespace_cmd)
@@ -158,4 +174,6 @@ def generate_launch_description():
     ld.add_action(reportemergency_cmd)
     ld.add_action(checkstairs_cmd)
     ld.add_action(checklink_cmd)
+    ld.add_action(climbstairs_cmd)
+    ld.add_action(checkbatteryclimbing_cmd)
     return ld
