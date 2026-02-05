@@ -54,12 +54,10 @@ stairs
         (at start(connected ?r1 ?r2))
         (at start(link_checked ?r1 ?r2))
         (at start(robot_at ?r ?r1))
-        (at start(next_move ?r ?r2))
     )
     :effect (and
         (at start(not(robot_at ?r ?r1)))
         (at end(robot_at ?r ?r2))
-        (at end(not(next_move ?r ?r2)))
         (at end(battery_unchecked ?r))
         (at end(not(battery_checked ?r)))
     )
@@ -146,7 +144,6 @@ stairs
         (at end(is_free ?r))
         (at end(not(battery_unchecked ?r)))
         (at end(battery_checked ?r))
-        (at end(next_move ?r ?to))
     )
 )
 
@@ -262,12 +259,10 @@ stairs
         (at start(stairs_connected ?r2 ?s))
         (at start(stairs_checked ?s ?r1 ?r2))
         (at start(robot_at ?r ?r1))
-        (at start(next_move ?r ?r2))
     )
     :effect (and
         (at start(not(robot_at ?r ?r1)))
         (at end(robot_at ?r ?r2))
-        (at end(not(next_move ?r ?r2)))
         (at end(battery_unchecked ?r))
         (at end(not(battery_checked ?r)))
     )
@@ -289,7 +284,6 @@ stairs
         (at end(is_free ?r))
         (at end(not(battery_unchecked ?r)))
         (at end(battery_checked ?r))
-        (at end(next_move ?r ?to))
     )
 )
 
