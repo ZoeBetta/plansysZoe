@@ -155,6 +155,14 @@ def generate_launch_description():
         output='screen',
         parameters=[])
 
+    checkroomopen_cmd = Node(
+        package='plansys2_simple_example_py',
+        executable='checkroomopen_action_node_fake.py', #for the fake action report_action_node_fake.py oppure report_action_node.py
+        name='checkroomopen_action_node',
+        namespace=namespace,
+        output='screen',
+        parameters=[])
+
     ld = LaunchDescription()
 
     ld.add_action(declare_namespace_cmd)
@@ -176,4 +184,5 @@ def generate_launch_description():
     ld.add_action(checklink_cmd)
     ld.add_action(climbstairs_cmd)
     ld.add_action(checkbatteryclimbing_cmd)
+    ld.add_action(checkroomopen_cmd)
     return ld

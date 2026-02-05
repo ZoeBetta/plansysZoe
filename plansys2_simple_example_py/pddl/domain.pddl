@@ -38,6 +38,7 @@ stairs
 (stairs_checked ?s - stairs ?l1 ?l2 -location)
 (environment_checked ?l - location)
 (link_checked ?r1 ?r2 - location)
+(room_open ?l - location)
 )
 
 
@@ -154,6 +155,7 @@ stairs
         (over all(robot_at ?r ?l))
         (at start(is_free ?r))
         (at start(not_emergency ?r))
+        (over all (room_open ?l))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -171,6 +173,7 @@ stairs
         (at start(is_free ?r))
         (at start(not_emergency ?r))
         (over all(gas_checked ?l))
+        (over all (room_open ?l))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -188,6 +191,7 @@ stairs
         (at start(is_free ?r))
         (at start(not_emergency ?r))
         (over all(crack_checked ?l))
+        (over all (room_open ?l))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -286,6 +290,22 @@ stairs
         (at end(battery_checked ?r))
     )
 )
+
+(:durative-action checkroomopen
+    :parameters (?r - robot ?l - location)
+    :duration ( = ?duration 5)
+    :condition (and
+        (at start(is_free ?r))
+        (at start(robot_at ?r ?l))
+
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(room_open ?l))
+    )
+)
+
 
 
 

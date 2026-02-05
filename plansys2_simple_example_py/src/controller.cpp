@@ -1097,7 +1097,84 @@ public:
                             std::cout << "Enough battery climbing: " << action_feedback.completion << std::endl;
                         }
                     }
-                }    
+                }
+                
+                if (action_feedback.action == "checkroomopen")
+                {   
+                    std::string sent = action_feedback.message_status;
+                    std::istringstream iss(sent);
+                    std::string word;
+                    std::vector<std::string> words;
+                    first = true;
+                    while (iss >> word)
+                    {
+                        words.push_back(word);
+                    }
+                    //std::cout<< words.size() << std::endl;
+                    if (words.size() == 2)
+                    {//std::cout<< words[0] << std::endl;
+                        if (words[0] == "EmergencyRoom" && first == true)
+                        {
+                            first = false;
+                            std::cout << "room closed broken: " << action_feedback.completion << std::endl;
+                            executor_client_->cancel_plan_execution();
+                            std::string from;
+                            from = words[1];
+                            problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
+                            old_goal = goal;
+                            auto a = check_predicate();
+                            std::cout << "Replanning" << std::endl;
+                            file_ << "Replan because room closed disconnected" << std::endl;
+                            if (a == false)
+                            {
+                                problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot " + current_position + ")"));
+                            }
+                             std::string to_remove = "(environment_checked " + from + ")";
+
+                                size_t pos = goal.find(to_remove);
+                                if (pos != std::string::npos) {
+                                    goal.erase(pos, to_remove.length());
+                                } 
+                            
+                            auto replan_init_time = std::chrono::high_resolution_clock::now();
+
+                            //moved_person = true;
+                            
+                                std::cout << "GOAL: " << goal << std::endl;
+                            problem_expert_->setGoal(plansys2::Goal("(" + goal + ")"));
+
+                            auto domain = domain_expert_->getDomain();
+                            auto problem = problem_expert_->getProblem();
+                            auto plan = planner_client_->getPlan(domain, problem);
+
+                            std::cout << problem << std::endl;
+                            
+
+                            const auto &plan2 = plan.value();
+                            for (const auto &item : plan2.items)
+                            {
+                                std::cout << "Action: " << item.action << std::endl;
+                                file_ << "Action: " << item.action << std::endl;
+                            }
+
+                            if (!plan.has_value())
+                            {
+                                std::cout << "Unsuccessful replan attempt to reach goal " << parser::pddl::toString(problem_expert_->getGoal()) << std::endl;
+                            }
+
+                            auto replan_end_time = std::chrono::high_resolution_clock::now();
+                            std::chrono::duration<double, std::milli> replan_duration = replan_end_time - replan_init_time;
+                            std::cout << "room closed Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            file_ << "Time taken for replanning: " << replan_duration.count() << " milliseconds" << std::endl;
+                            executor_client_->start_plan_execution(plan.value());
+                        }
+                        else if (words[0] == "Good" && f_bat == true)
+                        {
+                            f_bat = false;
+                            std::cout << "All is good in paradise: " << action_feedback.completion << std::endl;
+                        }
+                    }
+                }
 
 
 
