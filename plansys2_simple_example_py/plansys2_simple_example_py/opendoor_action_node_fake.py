@@ -58,7 +58,7 @@ class OpendoorAction(ActionExecutorClient):
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
-            found_person = True
+            #found_person = True
 
             self.get_logger().info('opening door from {}'.format(self.locfrom))
             if (found_person):
