@@ -39,6 +39,9 @@ stairs
 (environment_checked ?l - location)
 (link_checked ?r1 ?r2 - location)
 (room_open ?l - location)
+(door_closed ?l - location)
+(door_blocked ?l -location)
+(door_notchecked ?l - location)
 )
 
 
@@ -71,6 +74,7 @@ stairs
         (at start(is_free ?r))
         (over all(robot_at ?r ?l))
         (over all(not_emergency ?r))
+        (over all(room_open ?l))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -228,6 +232,7 @@ stairs
         (over all(stairs_connected ?from ?s))
         (over all(stairs_connected ?to ?s))
         (at start(is_free ?r))
+        (over all(not_emergency ?r))
     )
     :effect (and
         (at start(not(is_free ?r)))
@@ -297,14 +302,57 @@ stairs
     :condition (and
         (at start(is_free ?r))
         (at start(robot_at ?r ?l))
+        (at start (door_notchecked ?l))
+        (over all(not_emergency ?r))
+
 
     )
     :effect (and
         (at start(not(is_free ?r)))
         (at end(is_free ?r))
         (at end(room_open ?l))
+        (at end(not(door_notchecked ?l)))
     )
 )
+
+(:durative-action opendoor
+    :parameters (?r - robot ?l - location)
+    :duration ( = ?duration 5)
+    :condition (and
+        (at start(is_free ?r))
+        (at start(robot_at ?r ?l))
+        (at start(door_closed ?l))
+        (over all(not_emergency ?r))
+
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(not(door_closed ?l)))
+        (at end(room_open ?l))
+    )
+)
+
+(:durative-action searchoutside
+    :parameters (?r - robot ?l - location)
+    :duration ( = ?duration 5)
+    :condition (and
+        (at start(is_free ?r))
+        (over all(robot_at ?r ?l))
+        (over all(not_emergency ?r))
+        (at start(door_blocked ?l))
+        (at start(not_emergency ?r))
+    )
+    :effect (and
+        (at start(not(is_free ?r)))
+        (at end(is_free ?r))
+        (at end(searched ?r ?l))
+        (at end(battery_unchecked ?r))
+        (at end(not(battery_checked ?r)))
+    )
+)
+
+
 
 
 

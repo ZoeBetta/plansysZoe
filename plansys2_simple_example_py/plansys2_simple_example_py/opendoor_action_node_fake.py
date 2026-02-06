@@ -27,43 +27,57 @@ from plansys2_msgs.msg import Param
 from threading import Event
 import time
 
-class ReportemergencyAction(ActionExecutorClient):
+class OpendoorAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('reportemergency', 0.5)
+        super().__init__('opendoor', 0.5)
         self.progress_ = 0.0
-        self.location = None
+        self.locfrom = None
+        self.locto = None
+        self.subscription = self.create_subscription(
+            ActionExecution,
+            '/actions_hub', self.listener_callback, 10)
+
+    def listener_callback(self, msg):
+        parameters = msg.arguments
+        action_name = msg.action
+#        self.get_logger().info(f'Action received with parameters {parameters}')
+
+        # Here, perform any action-specific handling based on action_name and parameters
+        if action_name == 'opendoor':
+            if len(parameters) == 2:  # Expected 'opendoor <robot> <location> '
+                self.locfrom = parameters[1]
+#                self.get_logger().info(f'Robot in {self.location}')
 
 
     def do_work(self):
-        
         if self.progress_ < 0.3:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Report emergency running')
+            self.send_feedback(self.progress_, 'Opendoor running')
         else:
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
-            found_person = False
+            found_person = True
 
-            self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
+            self.get_logger().info('opening door from {}'.format(self.locfrom))
             if (found_person):
-              self.send_feedback(10.0, 'Low battery')
+              self.send_feedback(10.0, 'EmergencyDooropen ' + self.locfrom)
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish opening door')
             else:
-              self.send_feedback(60.0, 'Enough battery')
+              self.send_feedback(60.0, 'No emergency recognized')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish opening door')
 
-        self.get_logger().info('reporting emergency battery ... {}'.format(self.progress_))
+        self.get_logger().info('opening door ... {}'.format(self.progress_))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = ReportemergencyAction()
-    node.set_parameters([Parameter(name='action_name', value='reportemergency')])
+    node = OpendoorAction()
+    node.set_parameters([Parameter(name='action_name', value='opendoor')])
 
     node.trigger_configure()
 

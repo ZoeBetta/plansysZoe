@@ -27,43 +27,42 @@ from plansys2_msgs.msg import Param
 from threading import Event
 import time
 
-class ReportemergencyAction(ActionExecutorClient):
+class SearchOutsideAction(ActionExecutorClient):
 
     def __init__(self):
-        super().__init__('reportemergency', 0.5)
+        super().__init__('searchoutside', 0.5)
         self.progress_ = 0.0
         self.location = None
 
 
     def do_work(self):
-        
         if self.progress_ < 0.3:
             self.progress_ += 0.05
-            self.send_feedback(self.progress_, 'Report emergency running')
+            self.send_feedback(self.progress_, 'SearchOutside running')
         else:
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
-            found_person = False
+            found_person = True
 
-            self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
+            self.get_logger().info('Searching outside:{}'.format(found_person))
             if (found_person):
-              self.send_feedback(10.0, 'Low battery')
+              self.send_feedback(10.0, 'Emergency recognized')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish search outside')
             else:
-              self.send_feedback(60.0, 'Enough battery')
+              self.send_feedback(60.0, 'Good bestemmia')
               time.sleep(1)
-              self.finish(True, 1.0, 'Finish battery')
+              self.finish(True, 1.0, 'Finish search outside')
 
-        self.get_logger().info('reporting emergency battery ... {}'.format(self.progress_))
+        self.get_logger().info('searching outside ... {}'.format(self.progress_))
 
 
 def main(args=None):
     rclpy.init(args=args)
 
-    node = ReportemergencyAction()
-    node.set_parameters([Parameter(name='action_name', value='reportemergency')])
+    node = SearchOutsideAction()
+    node.set_parameters([Parameter(name='action_name', value='searchoutside')])
 
     node.trigger_configure()
 

@@ -57,7 +57,8 @@ install(PROGRAMS
   plansys2_simple_example_py/climbstairs_action_node_fake.py
   plansys2_simple_example_py/checkbatteryclimbing_action_node_fake.py
   plansys2_simple_example_py/checkroomopen_action_node_fake.py
-
+  plansys2_simple_example_py/opendoor_action_node_fake.py
+  plansys2_simple_example_py/searchoutside_action_node_fake.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
