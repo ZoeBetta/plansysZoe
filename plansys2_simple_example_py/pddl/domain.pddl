@@ -64,6 +64,7 @@ stairs
         (at end(robot_at ?r ?r2))
         (at end(battery_unchecked ?r))
         (at end(not(battery_checked ?r)))
+
     )
 )
 
@@ -135,13 +136,12 @@ stairs
 )
 
 (:durative-action check
-    :parameters (?r - robot ?from ?to - location)
+    :parameters (?r - robot ?from - location)
     :duration ( = ?duration 5)
     :condition (and
         (at start(battery_unchecked ?r))
         (at start(is_free ?r))
         (at start(robot_at ?r ?from))
-        (over all(connected ?from ?to))
 
     )
     :effect (and
@@ -274,25 +274,6 @@ stairs
         (at end(robot_at ?r ?r2))
         (at end(battery_unchecked ?r))
         (at end(not(battery_checked ?r)))
-    )
-)
-
-(:durative-action checkbatteryclimbing
-    :parameters (?r - robot ?from ?to - location ?s - stairs)
-    :duration ( = ?duration 5)
-    :condition (and
-        (at start(battery_unchecked ?r))
-        (at start(is_free ?r))
-        (at start(robot_at ?r ?from))
-        (at start(stairs_connected ?from ?s))
-        (at start(stairs_connected ?to ?s))
-
-    )
-    :effect (and
-        (at start(not(is_free ?r)))
-        (at end(is_free ?r))
-        (at end(not(battery_unchecked ?r)))
-        (at end(battery_checked ?r))
     )
 )
 

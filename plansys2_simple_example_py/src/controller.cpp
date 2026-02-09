@@ -253,7 +253,7 @@ public:
         auto problem = problem_expert_->getProblem();
         auto plan = planner_client_->getPlan(domain, problem);
 
-        std::cout << problem << std::endl;
+        //std::cout << problem << std::endl;
         file_ << "Replan to guide the person outside" << std::endl;
 
         const auto &plan2 = plan.value();
@@ -472,6 +472,7 @@ public:
         case STARTING:
         {
             // Set the goal for next state
+             auto replan_init_time = std::chrono::high_resolution_clock::now();
             problem_expert_->setGoal(plansys2::Goal("(" + goal + ")"));
 
             // Compute the plan
@@ -486,6 +487,10 @@ public:
             }
 
             const auto &plan2 = plan.value();
+             auto replan_end_time = std::chrono::high_resolution_clock::now();
+             std::chrono::duration<double, std::milli> replan_duration = replan_end_time - replan_init_time;
+        std::cout << "Time taken for first planning: " << replan_duration.count() << " milliseconds" << std::endl;
+        file_ << "Time taken for first planning: " << replan_duration.count() << " milliseconds" << std::endl;
             for (const auto &item : plan2.items)
             {
                 std::cout << "Action: " << item.action << std::endl;
@@ -541,7 +546,8 @@ public:
                                 ppl_replanned = 0;
                                 if (cons == true)
                                 {
-                                    guide_person();
+                                    //guide_person();
+                                    emergency_plan();
                                 }
                                 cons = false;
                             }
@@ -753,7 +759,8 @@ public:
                         {
                             first = false;
                             std::cout << "Low battery: " << action_feedback.completion << std::endl;
-                            finish_plan();
+                            //finish_plan();
+                            emergency_plan();
                         }
                         else if (words[0] == "Enough" && f_bat == true)
                         {

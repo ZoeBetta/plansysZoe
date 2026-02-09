@@ -49,7 +49,7 @@ class ReportAction(ActionExecutorClient):
             #self.finish(True, 1.0, 'Search completed');
             a = ['conscious', 'unconscious', 'confused']
             result = random.choice(a)
-            #result = 'unconscious'
+            #result = 'conscious'
             if (result == 'conscious'):
                self.send_feedback(self.progress_, 'Diastate conscious')
             elif (result == 'confused'):
