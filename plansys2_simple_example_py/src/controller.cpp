@@ -54,19 +54,18 @@ public:
     void init_knowledge()
     {
         problem_expert_->addInstance(plansys2::Instance{"spot", "robot"});
-        problem_expert_->addInstance(plansys2::Instance{"a", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"b", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"c", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"d", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"e", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"f", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"g", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"h", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"i", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"j", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"battery_point", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"a1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"b1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"c1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"d1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"e1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"f1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"g1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"h1", "location"});
+        problem_expert_->addInstance(plansys2::Instance{"i1", "location"});
         problem_expert_->addInstance(plansys2::Instance{"exit", "location"});
-        problem_expert_->addInstance(plansys2::Instance{"s1", "stairs"});
+        problem_expert_->addInstance(plansys2::Instance{"sc1", "stairs"});
+        problem_expert_->addInstance(plansys2::Instance{"sg1", "stairs"});
 
         problem_expert_->addInstance(plansys2::Instance{"stand", "state"});
         problem_expert_->addInstance(plansys2::Instance{"lay", "state"});
@@ -77,70 +76,64 @@ public:
         problem_expert_->addInstance(plansys2::Instance{"unconscious", "consciousness"});
         problem_expert_->addInstance(plansys2::Instance{"confused", "consciousness"});
 
-        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot a)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected a b)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected b a)"));
-        //problem_expert_->addPredicate(plansys2::Predicate("(connected c b)"));
-        //problem_expert_->addPredicate(plansys2::Predicate("(connected b c)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected c d)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected d c)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot a1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected a1 b1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected b1 a1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected b1 c1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected c1 b1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected a1 d1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected d1 a1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected b1 e1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected e1 b1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected c1 f1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected f1 c1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected d1 e1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected e1 d1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected e1 f1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected f1 e1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected d1 g1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected g1 d1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected e1 h1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected h1 e1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected f1 i1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected i1 f1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected g1 h1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected h1 g1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected h1 i1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected i1 h1)"));
+        //problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected a s1)"));
+        //problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected e s1)"));
 
-        problem_expert_->addPredicate(plansys2::Predicate("(connected a c)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected c a)"));
 
-        problem_expert_->addPredicate(plansys2::Predicate("(connected d b)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected b d)"));
 
-        problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected a s1)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(stairs_connected e s1)"));
-
-/*         problem_expert_->addPredicate(plansys2::Predicate("(connected e c)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected c e)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected e h)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected h e)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected b e)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected e b)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected f d)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected d f)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected f i)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected i f)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected g a)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected a g)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected h g)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected g h)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected i e)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected e i)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected j exit)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected exit j)")); */
-
-        problem_expert_->addPredicate(plansys2::Predicate("(connected a battery_point)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected battery_point a)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected exit d)"));
-        problem_expert_->addPredicate(plansys2::Predicate("(connected d exit)"));
-        //problem_expert_->addPredicate(plansys2::Predicate("(connected exit battery_point)"));
-        //problem_expert_->addPredicate(plansys2::Predicate("(connected battery_point exit)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected exit a1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(connected a1 exit)"));
 
         problem_expert_->addPredicate(plansys2::Predicate("(battery_unchecked spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(not_emergency spot)"));
         problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 
-        problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 
-              problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked a)"));
-              problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked b)"));
-              problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked c)"));
-              problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked d)"));
-              problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked e)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked a1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked b1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked c1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked d1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked e1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked f1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked g1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked h1)"));
+        problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked i1)"));
 
 
 
 
         //goal = "and (stairs_checked s1 a e) ";
         
-        goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (searched spot e) (environment_checked a) (environment_checked b) (environment_checked c) (environment_checked d) (environment_checked e)";
-        //goal = "and(searched spot a) (searched spot b) (searched spot c) (searched spot d) (searched spot e) (searched spot f) (searched spot g) (searched spot h) (searched spot i) (searched spot j)";
-        current_position = "a";
+        goal = "and(searched spot d1) (searched spot e1) (searched spot c1) (searched spot d1) (searched spot e1) (searched spot f1) (searched spot g1) (searched spot h1) (searched spot i1)"
+         "(environment_checked d1) (environment_checked e1) (environment_checked c1) (environment_checked d1) (environment_checked e1) (environment_checked f1) (environment_checked g1) (environment_checked h1) (environment_checked i1)";
+        
+        current_position = "a1";
     }
 
 
@@ -499,8 +492,10 @@ public:
             }
             file_ << "------------------------" << std::endl;
             // Execute the plan
+            std::cout << "Executing plan..." << std::endl;
             if (executor_client_->start_plan_execution(plan.value()))
             {
+                std::cout << "Plan execution started successfully" << std::endl;
                 state_ = INIT;
             }
         }
@@ -742,7 +737,7 @@ public:
                 }
 
                 if (action_feedback.action == "check")
-                {
+                {   //std::cout << "DSFVRTVSFGBRWBGDVS" << std::endl;
                     std::string sent = action_feedback.message_status;
                     std::istringstream iss(sent);
                     std::string word;
