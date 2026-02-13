@@ -130,8 +130,8 @@ public:
 
         //goal = "and (stairs_checked s1 a e) ";
         
-        goal = "and(searched spot a1) (searched spot b1) (searched spot c1) (searched spot d1) "//(searched spot e1) (searched spot f1) (searched spot g1) (searched spot h1) (searched spot i1)"
-         "(environment_checked a1) (environment_checked b1) (environment_checked c1) (environment_checked d1) ";//(environment_checked e1) (environment_checked f1) (environment_checked g1) (environment_checked h1) (environment_checked i1)";
+        goal = "and(searched spot a1) (searched spot b1) (searched spot c1) "//(searched spot d1) (searched spot e1) (searched spot f1) (searched spot g1) (searched spot h1) (searched spot i1)"
+         "(environment_checked a1) (environment_checked b1) (environment_checked c1) ";//(environment_checked d1) (environment_checked e1) (environment_checked f1) (environment_checked g1) (environment_checked h1) (environment_checked i1)";
         
         current_position = "a1";
     }

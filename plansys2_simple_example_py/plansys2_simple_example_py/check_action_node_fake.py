@@ -43,7 +43,7 @@ class CheckAction(ActionExecutorClient):
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05 # vero, quindi batteria bassa il 5% delle volte
-            #found_person = False
+            found_person = False
 
             self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
             if (found_person):
