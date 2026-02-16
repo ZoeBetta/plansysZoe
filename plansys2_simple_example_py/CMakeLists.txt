@@ -24,11 +24,15 @@ set(dependencies
 add_executable(controller_node src/controller.cpp)
 ament_target_dependencies(controller_node ${dependencies})
 
+add_executable(Zcontroller_node src/controllerZoe.cpp)
+ament_target_dependencies(Zcontroller_node ${dependencies})
+
 
 install(DIRECTORY launch pddl DESTINATION share/${PROJECT_NAME})
 
 install(TARGETS
   controller_node
+  Zcontroller_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
