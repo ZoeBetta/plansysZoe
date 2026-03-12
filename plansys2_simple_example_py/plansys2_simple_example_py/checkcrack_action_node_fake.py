@@ -33,6 +33,7 @@ class CheckcrackAction(ActionExecutorClient):
         super().__init__('checkcrack', 0.5)
         self.progress_ = 0.0
         self.location = None
+        self.counter=0
 
 
     def do_work(self):
@@ -43,7 +44,7 @@ class CheckcrackAction(ActionExecutorClient):
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
-            #found_person = True
+            found_person = False
 
             self.get_logger().info('Checking crack:{}'.format(found_person))
             if (found_person):

@@ -33,6 +33,7 @@ class CheckAction(ActionExecutorClient):
         super().__init__('check', 0.5)
         self.progress_ = 0.0
         self.location = None
+        self.counter=0
 
 
     def do_work(self):
@@ -44,7 +45,7 @@ class CheckAction(ActionExecutorClient):
             self.progress_ = 0.0
             found_person = random() < 0.05 # vero, quindi batteria bassa il 5% delle volte
             found_person = False
-
+            
             self.get_logger().info('Busqueda completada. Bateria baja: {}'.format(found_person))
             if (found_person):
               self.send_feedback(10.0, 'Low battery')

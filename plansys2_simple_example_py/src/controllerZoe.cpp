@@ -66,33 +66,29 @@ problem_expert_->addPredicate(plansys2::Predicate("(is_exit exit)"));
 problem_expert_->addPredicate(plansys2::Predicate("(is_free spot)"));
 problem_expert_->addInstance(plansys2::Instance{"r00f0", "location"});
 problem_expert_->addInstance(plansys2::Instance{"r01f0", "location"});
-problem_expert_->addInstance(plansys2::Instance{"r10f0", "location"});
-problem_expert_->addInstance(plansys2::Instance{"r11f0", "location"});
-problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot r01f0)"));
+problem_expert_->addInstance(plansys2::Instance{"r10f1", "location"});
+problem_expert_->addInstance(plansys2::Instance{"r11f1", "location"});
+problem_expert_->addPredicate(plansys2::Predicate("(robot_at spot r00f0)"));
 problem_expert_->addPredicate(plansys2::Predicate("(not_emergency spot)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r10f0 r00f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r00f0 r10f0)"));
+
 problem_expert_->addPredicate(plansys2::Predicate("(connected r01f0 r00f0)"));
 problem_expert_->addPredicate(plansys2::Predicate("(connected r00f0 r01f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r11f0 r01f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r01f0 r11f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r11f0 r10f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(connected r10f0 r11f0)"));
+
+problem_expert_->addPredicate(plansys2::Predicate("(connected r11f1 r10f1)"));
+problem_expert_->addPredicate(plansys2::Predicate("(connected r10f1 r11f1)"));
 problem_expert_->addPredicate(plansys2::Predicate("(connected exit r00f0)"));
 problem_expert_->addPredicate(plansys2::Predicate("(connected r00f0 exit)"));
-problem_expert_->addInstance(plansys2::Instance{"p1", "person"});
-problem_expert_->addInstance(plansys2::Instance{"p2", "person"});
+
+
 problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r00f0)"));
 problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r01f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(person_detected p1 r01f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r10f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(person_detected p2 r10f0)"));
-problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r11f0)"));
+problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r10f1)"));
+problem_expert_->addPredicate(plansys2::Predicate("(door_notchecked r11f1)"));
 
 
         //goal = "and (stairs_checked s1 a e) ";
         
-        goal ="and(searched spot r00f0) (environment_checked r00f0) (person_evaluated p1) (person_reported p1) (dialog_finished p1) (searched spot r01f0) (environment_checked r01f0) (person_evaluated p2) (person_reported p2) (dialog_finished p2) (searched spot r10f0) (environment_checked r10f0) (searched spot r11f0) (environment_checked r11f0) ";
+        goal ="and(searched spot r00f0) (environment_checked r00f0) (searched spot r01f0) (environment_checked r01f0) (searched spot r10f1) (environment_checked r10f1) (searched spot r11f1) (environment_checked r11f1) ";
     }
 
 

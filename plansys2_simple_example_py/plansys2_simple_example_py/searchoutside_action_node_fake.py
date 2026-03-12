@@ -43,7 +43,7 @@ class SearchOutsideAction(ActionExecutorClient):
             #self.finish(True, 1.0, 'Search completed');
             self.progress_ = 0.0
             found_person = random() < 0.05
-            found_person = True
+            found_person = False
 
             self.get_logger().info('Searching outside:{}'.format(found_person))
             if (found_person):

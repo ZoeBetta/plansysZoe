@@ -30,7 +30,7 @@ class EvaluateAction(ActionExecutorClient):
         else:
             a = ['lay', 'sit', 'stand']
             result = random.choice(a)
-
+            result = 'stand'
             if (result == 'lay'):
                self.send_feedback(self.progress_, 'Person state lay')
             elif (result == 'sit'):

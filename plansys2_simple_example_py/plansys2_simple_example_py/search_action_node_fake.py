@@ -41,6 +41,7 @@ class SearchAction(ActionExecutorClient):
         self.loc.append(randint(1,self.max_loc))
         self.loc.append(randint(1,self.max_loc))
         self.loc.append(randint(1,self.max_loc)) 
+        self.loc = [10, 10, 10, 10]
 
         self.subscription = self.create_subscription(
             ActionExecution,

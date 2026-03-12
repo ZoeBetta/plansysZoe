@@ -1,5 +1,5 @@
 (define (problem spot_problem_1)
-  (:domain spot_domain)
+  (:domain simple)
 
 (:objects
   spot - robot
